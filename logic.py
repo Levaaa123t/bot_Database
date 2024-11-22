@@ -4,10 +4,21 @@ from config import DATABASE
 skills = [ (_,) for _ in (['Python', 'SQL', 'API', 'Telegram'])]
 statuses = [ (_,) for _ in (['На этапе проектирования', 'В процессе разработки', 'Разработан. Готов к использованию.', 'Обновлен', 'Завершен. Не поддерживается'])]
 
+
 class DB_Manager:
     def __init__(self, database):
         self.database = database
-        
+    def new_column(self):
+        conn = sqlite3.connect('portfolio.db')
+        cursor = conn.cursor()
+        new_column_name = 'image'
+        new_column_type = 'TEXT'
+
+        table_name = 'projects'
+        alter_query = f"ALTER TABLE {table_name} ADD COLUMN {new_column_name} {new_column_type}"
+        cursor.execute(alter_query)
+        conn.commit()
+        conn.close()
     def create_tables(self):
         conn = sqlite3.connect(self.database)
         with conn:
@@ -34,7 +45,10 @@ class DB_Manager:
                             status_id INTEGER PRIMARY KEY,
                             status_name TEXT
                         )''')
+            
             conn.commit()
+            
+
 
     def __executemany(self, sql, data):
         conn = sqlite3.connect(self.database)
@@ -119,6 +133,7 @@ WHERE project_name = ? AND user_id = ?""" # Запиши сюда правиль
         self.__executemany(sql, [data]) 
 
 
+
     def delete_project(self, user_id, project_id):
         sql = """DELETE FROM projects 
 WHERE user_id = ? AND project_id = ? """ # Запиши сюда правильный SQL запрос
@@ -128,10 +143,14 @@ WHERE user_id = ? AND project_id = ? """ # Запиши сюда правиль�
         sql = """DELETE FROM skills 
 WHERE skill_id = ? AND project_id = ? """ # Запиши сюда правильный SQL запрос
         self.__executemany(sql, [(skill_id, project_id)])
-
+    
 
 if __name__ == '__main__':
     manager = DB_Manager(DATABASE)
-#    manager.default_insert()
-    #manager.insert_project([(1,'Pokemon_Tgbot','https://github.com/Levaaa123t/Pokemon_Tgbot',3)])
-    manager.update_projects('description',('Проект тг бота который отправляет картинки с покемонами','Pokemon_Tgbot','1'))
+    #manager.default_insert()
+    #manager.insert_project([(2,'Final_project','https://github.com/Levaaa123t/Final-Project',3)])
+    #manager.update_projects('description',('Проект тг бота который отправляет картинки с покемонами','Pokemon_Tgbot','1'))
+    #manager.update_projects('image',('testdb.png','Pokemon_Tgbot','1'))
+    #manager.delete_project(2,2)
+    #manager.get_project_id('Pokemon_Tgbot',1)
+   # manager.insert_skill('Pokemon_Tgbot',1)
