@@ -74,8 +74,8 @@ class DB_Manager:
 
     def insert_project(self, data):
         sql = """INSERT INTO projects 
-(user_id, project_name, url, status_id) 
-values(?, ?, ?, ?)""" # Запиши сюда правильный SQL запрос
+(user_id, project_name, url, status_id, description) 
+values(?, ?, ?, ?, ?)""" # Запиши сюда правильный SQL запрос
         self.__executemany(sql, data)
 
 
